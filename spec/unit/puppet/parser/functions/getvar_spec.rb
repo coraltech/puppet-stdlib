@@ -6,16 +6,23 @@ describe Puppet::Parser::Functions.function(:getvar) do
   describe 'when calling getvar from puppet' do
 
     it "should not compile when no arguments are passed" do
-      Puppet[:code] = 'getvar()'
-      expect { scope.compiler.compile }.should raise_error(Puppet::ParseError, /wrong number of arguments/)
+      pending("Fails on 2.6.x, see bug #15912") if Puppet.version =~ /^2\.6\./
+      Puppet[:code] = '$foo = getvar()'
+      expect {
+        scope.compiler.compile
+      }.to raise_error(Puppet::ParseError, /wrong number of arguments/)
     end
+
     it "should not compile when too many arguments are passed" do
-      Puppet[:code] = 'getvar("foo::bar", "baz")'
-      expect { scope.compiler.compile }.should raise_error(Puppet::ParseError, /wrong number of arguments/)
+      pending("Fails on 2.6.x, see bug #15912") if Puppet.version =~ /^2\.6\./
+      Puppet[:code] = '$foo = getvar("foo::bar", "baz")'
+      expect {
+        scope.compiler.compile
+      }.to raise_error(Puppet::ParseError, /wrong number of arguments/)
     end
 
     it "should lookup variables in other namespaces" do
-      pending "Puppet doesn't appear to think getvar is an rvalue function... BUG?"
+      pending("Fails on 2.6.x, see bug #15912") if Puppet.version =~ /^2\.6\./
       Puppet[:code] = <<-'ENDofPUPPETcode'
         class site::data { $foo = 'baz' }
         include site::data
